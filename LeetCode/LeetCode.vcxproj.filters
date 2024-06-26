@@ -35,5 +35,11 @@
     <ClInclude Include="MaxPointsOnLine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="JudgeSqureRoot.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BalanceBST.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
