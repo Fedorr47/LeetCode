@@ -136,6 +136,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AppleCollect.h" />
     <ClInclude Include="BalanceBST.h" />
     <ClInclude Include="JudgeSqureRoot.h" />
     <ClInclude Include="MaxPointsOnLine.h" />
