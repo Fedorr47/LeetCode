@@ -66,7 +66,6 @@ namespace DisjointTree
         int findCircleNum(vector<vector<int>>& isConnected) {
             int con_len = isConnected.size();
             UnionFind uf(con_len);
-            int connected_val = con_len;
             for (int i = 0; i < con_len; ++i)
             {
                 for (int j = 0; j < con_len; ++j)
@@ -76,11 +75,10 @@ namespace DisjointTree
                     if (isConnected[i][j] && !uf.is_connected(i, j))
                     {
                         uf.unionSet(i, j);
-                        --connected_val;
                     }
                 }
             }
-            return connected_val;
+            return uf.getCount();
         }
 
         bool validTree(int n, vector<vector<int>>& edges) {
