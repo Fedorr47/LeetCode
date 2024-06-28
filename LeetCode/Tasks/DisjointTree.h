@@ -18,6 +18,7 @@ namespace DisjointTree
         {
             iota(root.begin(), root.end(), 0);
         }
+
         int find(int x)
         {
             if (root[x] == x)
@@ -26,6 +27,7 @@ namespace DisjointTree
             }
             return root[x] = find(root[x]);
         }
+
         void union_set(int x, int y)
         {
             int rootX = find(x);
@@ -49,7 +51,7 @@ namespace DisjointTree
             }
         }
 
-        int get_count() {
+        virtual int get_count() {
             return count;
         }
 
@@ -162,5 +164,80 @@ namespace DisjointTree
 
             return smallestString;
         }
+
+        // Evaluate Division https://leetcode.com/problems/evaluate-division/submissions/1302921379/
+        vector<double> calcEquation(vector<vector<string>>& equations, vector<double>& values, vector<vector<string>>& queries) {
+            unordered_map<string, pair<string, double>> gidWeight;
+
+            // Step 1). build the union groups
+            for (int i = 0; i < equations.size(); i++) {
+                vector<string> equation = equations[i];
+                string dividend = equation[0], divisor = equation[1];
+                double quotient = values[i];
+
+                unionGroups(gidWeight, dividend, divisor, quotient);
+            }
+
+            // Step 2). run the evaluation, with "lazy" updates in find() function
+            vector<double> results(queries.size());
+            for (int i = 0; i < queries.size(); i++) {
+                vector<string> query = queries[i];
+                string dividend = query[0], divisor = query[1];
+
+                if (!gidWeight.count(dividend) || !gidWeight.count(divisor))
+                    // case 1). at least one variable did not appear before
+                    results[i] = -1.0;
+                else {
+                    pair<string, double> dividendEntry = find(gidWeight, dividend);
+                    pair<string, double> divisorEntry = find(gidWeight, divisor);
+
+                    string dividendGid = dividendEntry.first;
+                    string divisorGid = divisorEntry.first;
+                    double dividendWeight = dividendEntry.second;
+                    double divisorWeight = divisorEntry.second;
+
+                    if (dividendGid != divisorGid)
+                        // case 2). the variables do not belong to the same chain/group
+                        results[i] = -1.0;
+                    else
+                        // case 3). there is a chain/path between the variables
+                        results[i] = dividendWeight / divisorWeight;
+                }
+            }
+
+            return results;
+        }
+
+        pair<string, double> find(unordered_map<string, pair<string, double>>& gidWeight, const string& nodeId) {
+            if (!gidWeight.count(nodeId))
+                gidWeight[nodeId] = { nodeId, 1.0 };
+
+            pair<string, double> entry = gidWeight[nodeId];
+            // found inconsistency, trigger chain update
+            if (entry.first != nodeId) {
+                pair<string, double> newEntry = find(gidWeight, entry.first);
+                gidWeight[nodeId] = { newEntry.first, entry.second * newEntry.second };
+            }
+
+            return gidWeight[nodeId];
+        }
+
+        void unionGroups(unordered_map<string, pair<string, double>>& gidWeight, const string& dividend, const string& divisor, double value) {
+            pair<string, double> dividendEntry = find(gidWeight, dividend);
+            pair<string, double> divisorEntry = find(gidWeight, divisor);
+
+            string dividendGid = dividendEntry.first;
+            string divisorGid = divisorEntry.first;
+            double dividendWeight = dividendEntry.second;
+            double divisorWeight = divisorEntry.second;
+
+            // merge the two groups together,
+            // by attaching the dividend group to the one of divisor
+            if (dividendGid != divisorGid) {
+                gidWeight[dividendGid] = { divisorGid, divisorWeight * value / dividendWeight };
+            }
+        }
+
     };
 }
+
