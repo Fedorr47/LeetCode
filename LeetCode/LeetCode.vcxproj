@@ -138,6 +138,8 @@
   <ItemGroup>
     <ClInclude Include="AppleCollect.h" />
     <ClInclude Include="BalanceBST.h" />
+    <ClInclude Include="DisjointTree.h" />
+    <ClInclude Include="numberOfSpecialSubstrings.h" />
     <ClInclude Include="JudgeSqureRoot.h" />
     <ClInclude Include="MaxPointsOnLine.h" />
     <ClInclude Include="KMP.h" />

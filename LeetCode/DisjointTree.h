@@ -1,6 +1,8 @@
 #pragma once
 
 #include <vector>
+#include <numeric>
+#include <algorithm>
 using namespace std;
 
 namespace DisjointTree
@@ -12,10 +14,7 @@ namespace DisjointTree
             rank(sz, 0),
             count(sz)
         {
-            for (int i = 0; i < sz; ++i)
-            {
-                root[i] = i;
-            }
+            iota(root.begin(), root.end(), 0);
         }
         int find(int x)
         {
@@ -25,7 +24,7 @@ namespace DisjointTree
             }
             return root[x] = find(root[x]);
         }
-        void unionSet(int x, int y)
+        void union_set(int x, int y)
         {
             int rootX = find(x);
             int rootY = find(y);
@@ -48,7 +47,7 @@ namespace DisjointTree
             }
         }
 
-        int getCount() {
+        int get_count() {
             return count;
         }
 
@@ -74,11 +73,11 @@ namespace DisjointTree
                         continue;
                     if (isConnected[i][j] && !uf.is_connected(i, j))
                     {
-                        uf.unionSet(i, j);
+                        uf.union_set(i, j);
                     }
                 }
             }
-            return uf.getCount();
+            return uf.get_count();
         }
 
         bool validTree(int n, vector<vector<int>>& edges) {
@@ -90,10 +89,43 @@ namespace DisjointTree
 
             for (int i = 0; i < edg_size; ++i)
             {
-                uf.unionSet(edges[i][0], edges[i][1]);
+                uf.union_set(edges[i][0], edges[i][1]);
             }
 
-            return uf.getCount() == 1;
+            return uf.get_count() == 1;
+        }
+
+        int countComponents(int n, vector<vector<int>>& edges) {
+            int edg_size = edges.size();
+            UnionFind uf(n);
+
+            for (int i = 0; i < edg_size; ++i)
+            {
+                uf.union_set(edges[i][0], edges[i][1]);
+            }
+
+            return uf.get_count();
+        }
+
+        int earliestAcq(vector<vector<int>>& logs, int n) {
+            int logs_len = logs.size();
+            std::sort(logs.begin(), logs.end(), [&logs](vector<int>& a, vector<int>& b) { return a[0] < b[0]; });
+            UnionFind uf(n);
+            for (int i = 0; i < logs_len; ++i)
+            {
+                int x = logs[i][1];
+                int y = logs[i][2];
+                if (!uf.is_connected(x, y))
+                {
+                    uf.union_set(x, y);
+                }
+                if (uf.get_count() == 1)
+                {
+                    return logs[i][0];
+                }
+
+            }
+            return -1;
         }
     };
 }
