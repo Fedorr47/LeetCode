@@ -130,19 +130,19 @@
   <ItemGroup>
     <ClCompile Include="EntryPoint.cpp" />
     <ClCompile Include="LeetTest.cpp" />
-    <ClCompile Include="MedianOfTwoSortedArrays.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AppleCollect.h" />
-    <ClInclude Include="BalanceBST.h" />
-    <ClInclude Include="DisjointTree.h" />
-    <ClInclude Include="numberOfSpecialSubstrings.h" />
-    <ClInclude Include="JudgeSqureRoot.h" />
-    <ClInclude Include="MaxPointsOnLine.h" />
-    <ClInclude Include="KMP.h" />
+    <ClInclude Include="Tasks\AppleCollect.h" />
+    <ClInclude Include="Tasks\BalanceBST.h" />
+    <ClInclude Include="Tasks\DisjointTree.h" />
+    <ClInclude Include="Tasks\JudgeSqureRoot.h" />
+    <ClInclude Include="Tasks\KMP.h" />
+    <ClInclude Include="Tasks\MaxPointsOnLine.h" />
+    <ClInclude Include="Tasks\MedianOfTwoSortedArrays.h" />
+    <ClInclude Include="Tasks\numberOfSpecialSubstrings.h" />
     <ClInclude Include="TotalImportanceRoads.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

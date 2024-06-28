@@ -133,26 +133,18 @@ namespace DisjointTree
         string smallestStringWithSwaps(string s, vector<vector<int>>& pairs) {
             UnionFind uf(s.size());
 
-            // Iterate over the edges
-            for (vector<int> edge : pairs) {
-                int source = edge[0];
-                int destination = edge[1];
-
-                // Perform the union of end points
-                uf.union_set(source, destination);
+            for (vector<int> pair : pairs) {
+                uf.union_set(pair[0], pair[1]);
             }
 
             unordered_map<int, vector<int>> rootToComponent;
-            // Group the vertices that are in the same component
             for (int vertex = 0; vertex < s.size(); vertex++) {
                 int root = uf.find(vertex);
-                // Add the vertices corresponding to the component root
                 rootToComponent[root].push_back(vertex);
             }
 
-            // String to store the answer
+
             string smallestString(s.length(), ' ');
-            // Iterate over each component
             for (auto component : rootToComponent) 
             {
                 vector<int> indices = component.second;
@@ -163,7 +155,6 @@ namespace DisjointTree
                 }
                 sort(characters.begin(), characters.end());
 
-                // Store the sorted characters
                 for (int index = 0; index < indices.size(); index++) {
                     smallestString[indices[index]] = characters[index];
                 }

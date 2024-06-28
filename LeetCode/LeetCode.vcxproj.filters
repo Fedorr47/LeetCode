@@ -13,13 +13,13 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\Tasks">
+      <UniqueIdentifier>{40cc29db-400b-4334-823e-543ceb15f848}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EntryPoint.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MedianOfTwoSortedArrays.h">
-      <Filter>Header Files</Filter>
     </ClCompile>
     <ClCompile Include="LeetTest.cpp">
       <Filter>Source Files</Filter>
@@ -35,29 +35,32 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="KMP.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Tasks\AppleCollect.h">
+      <Filter>Header Files\Tasks</Filter>
     </ClInclude>
-    <ClInclude Include="MaxPointsOnLine.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Tasks\BalanceBST.h">
+      <Filter>Header Files\Tasks</Filter>
     </ClInclude>
-    <ClInclude Include="JudgeSqureRoot.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Tasks\DisjointTree.h">
+      <Filter>Header Files\Tasks</Filter>
     </ClInclude>
-    <ClInclude Include="BalanceBST.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Tasks\JudgeSqureRoot.h">
+      <Filter>Header Files\Tasks</Filter>
     </ClInclude>
-    <ClInclude Include="AppleCollect.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Tasks\KMP.h">
+      <Filter>Header Files\Tasks</Filter>
     </ClInclude>
-    <ClInclude Include="DisjointTree.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Tasks\MaxPointsOnLine.h">
+      <Filter>Header Files\Tasks</Filter>
     </ClInclude>
-    <ClInclude Include="numberOfSpecialSubstrings.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Tasks\MedianOfTwoSortedArrays.h">
+      <Filter>Header Files\Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="Tasks\numberOfSpecialSubstrings.h">
+      <Filter>Header Files\Tasks</Filter>
     </ClInclude>
     <ClInclude Include="TotalImportanceRoads.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Tasks</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
