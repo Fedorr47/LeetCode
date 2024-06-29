@@ -8,6 +8,7 @@ namespace SlidingWindow
 {
     class Solution {
     public:
+        // https://leetcode.com/problems/count-substrings-without-repeating-character/description/
         int numberOfSpecialSubstrings(string s) {
             int substringCount = 0;
 

@@ -62,5 +62,11 @@
     <ClInclude Include="TotalImportanceRoads.h">
       <Filter>Header Files\Tasks</Filter>
     </ClInclude>
+    <ClInclude Include="Tasks\ArrayTasks.h">
+      <Filter>Header Files\Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="Tasks\SortTasks.h">
+      <Filter>Header Files\Tasks</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

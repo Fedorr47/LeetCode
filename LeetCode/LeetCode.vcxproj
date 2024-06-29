@@ -136,6 +136,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tasks\AppleCollect.h" />
+    <ClInclude Include="Tasks\ArrayTasks.h" />
     <ClInclude Include="Tasks\BalanceBST.h" />
     <ClInclude Include="Tasks\DisjointTree.h" />
     <ClInclude Include="Tasks\JudgeSqureRoot.h" />
@@ -143,6 +144,7 @@
     <ClInclude Include="Tasks\MaxPointsOnLine.h" />
     <ClInclude Include="Tasks\MedianOfTwoSortedArrays.h" />
     <ClInclude Include="Tasks\numberOfSpecialSubstrings.h" />
+    <ClInclude Include="Tasks\SortTasks.h" />
     <ClInclude Include="TotalImportanceRoads.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
