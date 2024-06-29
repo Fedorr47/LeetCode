@@ -41,7 +41,6 @@ namespace SortTasks
         }
     };
 
-    // Функция для создания односвязного списка из массива
     ListNode* createLinkedList(std::span<int> arr) {
         if (arr.size() == 0) return nullptr;
         ListNode* head = new ListNode(arr[0]);

@@ -138,6 +138,7 @@
     <ClInclude Include="Tasks\AppleCollect.h" />
     <ClInclude Include="Tasks\ArrayTasks.h" />
     <ClInclude Include="Tasks\BalanceBST.h" />
+    <ClInclude Include="Tasks\BestStock.h" />
     <ClInclude Include="Tasks\DisjointTree.h" />
     <ClInclude Include="Tasks\JudgeSqureRoot.h" />
     <ClInclude Include="Tasks\KMP.h" />

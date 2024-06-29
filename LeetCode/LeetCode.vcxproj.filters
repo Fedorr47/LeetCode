@@ -68,5 +68,8 @@
     <ClInclude Include="Tasks\SortTasks.h">
       <Filter>Header Files\Tasks</Filter>
     </ClInclude>
+    <ClInclude Include="Tasks\BestStock.h">
+      <Filter>Header Files\Tasks</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
