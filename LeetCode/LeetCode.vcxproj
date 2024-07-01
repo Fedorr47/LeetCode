@@ -130,6 +130,7 @@
   <ItemGroup>
     <ClCompile Include="EntryPoint.cpp" />
     <ClCompile Include="LeetTest.cpp" />
+    <ClCompile Include="Tasks\DFS.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
