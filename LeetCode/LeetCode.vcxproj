@@ -136,6 +136,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DFS_BFS.h" />
+    <ClInclude Include="LRFU.h" />
+    <ClInclude Include="SlidingWindow.h" />
     <ClInclude Include="Tasks\AppleCollect.h" />
     <ClInclude Include="Tasks\ArrayTasks.h" />
     <ClInclude Include="Tasks\BalanceBST.h" />

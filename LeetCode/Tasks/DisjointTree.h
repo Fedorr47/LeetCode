@@ -5,6 +5,7 @@
 #include <string>
 #include <algorithm>
 #include <unordered_map>
+#include <queue>
 using namespace std;
 
 namespace DisjointTree
@@ -19,13 +20,12 @@ namespace DisjointTree
             iota(root.begin(), root.end(), 0);
         }
 
-        int find(int x)
-        {
-            if (root[x] == x)
-            {
-                return x;
+        int find(int x) {
+            while (root[x] != x) {
+                root[x] = root[root[x]];
+                x = root[x];
             }
-            return root[x] = find(root[x]);
+            return x;
         }
 
         void union_set(int x, int y)
@@ -239,5 +239,68 @@ namespace DisjointTree
         }
 
     };
+
+    /// <summary>
+    ///  https://leetcode.com/problems/min-cost-to-connect-all-points
+    /// </summary>
+    struct Edge
+    {
+        int start_point_{ 0 };
+        int end_point_{ 0 };
+        int cost_{ 0 };
+        Edge(int start, int end, int cost) :
+            start_point_(start),
+            end_point_(end),
+            cost_(cost)
+        {}
+    };
+
+    bool operator<(const Edge& edge1, const Edge& edge2)
+    {
+        return edge1.cost_ > edge2.cost_;
+    }
+
+    int minCostConnectPoints(vector<vector<int>>& points)
+    {
+        int sz = points.size();
+        if (sz == 0)
+        {
+            return 0;
+        }
+
+        priority_queue<Edge> pq;
+        UnionFind uf(sz);
+
+        for (int i = 0; i < sz; ++i)
+        {
+            vector<int>& coordinate_1 = points[i];
+            for (int j = i + 1; j < sz; ++j)
+            {
+                vector<int>& coordinate_2 = points[j];
+                int cost = abs(coordinate_1[0] - coordinate_2[0]) + abs(coordinate_1[1] - coordinate_2[1]);
+                Edge e(i, j, cost);
+                pq.push(e);
+            }
+        }
+
+        int res = 0;
+        int count = sz - 1;
+        while (!pq.empty() && count > 0)
+        {
+            Edge e = pq.top();
+            pq.pop();
+
+            if (!uf.is_connected(e.start_point_, e.end_point_))
+            {
+                uf.union_set(e.start_point_, e.end_point_);
+                res += e.cost_;
+                --count;
+            }
+        }
+
+        return res;
+    }
+
 }
+
 

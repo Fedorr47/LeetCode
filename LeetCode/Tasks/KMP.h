@@ -42,6 +42,7 @@ namespace KMP
                 }
                 if (j == m) {
                     return i - m + 1; // Найдено совпадение
+                    //j = pi[j - 1];
                 }
             }
 

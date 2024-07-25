@@ -1,72 +1,692 @@
-﻿#include <iostream>
-
-#include <vector>
-#include <unordered_set>
-#include <unordered_map>
-#include <random>
+﻿#include <vector>
 #include <stack>
+#include <unordered_map>
+#include <algorithm>
+#include <span>
+#include <ranges>
+#include <iostream>
+#include <unordered_set>
+#include <iomanip> 
+#include <queue>
+#include <numeric>
 
 using namespace std;
 
-vector<vector<int>> allPathsSourceTarget(vector<vector<int>>& graph)
-{
-    vector<vector<int>> paths;
-    if (graph.empty()) {
-        return paths;
-    }
+struct ListNode {
+    int val;
+    ListNode* next;
+    ListNode() : val(0), next(nullptr) {}
+    ListNode(int x) : val(x), next(nullptr) {}
+    ListNode(int x, ListNode* next) : val(x), next(next) {}
+};
 
-    stack<pair<int, vector<int>>>
-        stk;
-    stk.push({ 0, {0} });
+bool hasCycle(ListNode* head) {
+    ListNode* hare = head;
+    ListNode* torture = head;
 
-    while (!stk.empty()) {
-        auto [node, path] = stk.top();
-        stk.pop();
-
-        if (node == graph.size() - 1) {
-            paths.push_back(path);
-            continue;
+    while (torture->next != nullptr)
+    {
+        if (torture->next->next != nullptr)
+        {
+            hare = hare->next->next;
         }
-
-        for (int nextNode : graph[node]) {
-            path.push_back(nextNode);
-            stk.push({ nextNode, path });
-            path.pop_back();
+        else
+        {
+            return false;
         }
+        if (torture == hare)
+        {
+            return true;
+        }
+        torture = torture->next;
     }
-
-    return paths;
+    return false;
 }
 
-class Solution {
+class Node {
 public:
-    void dfs(vector<vector<int>>& graph, int node, vector<int>& path,
-        vector<vector<int>>& paths) {
-        path.push_back(node);
-        if (node == graph.size() - 1) {
-            paths.emplace_back(path);
-            return;
-        }
-        vector<int> nextNodes = graph[node];
-        for (int nextNode : nextNodes) {
-            dfs(graph, nextNode, path, paths);
-            path.pop_back();
-        }
-    }
+    int val;
+    Node* next;
+    Node* random;
 
-    vector<vector<int>> allPathsSourceTarget(vector<vector<int>>& graph) {
-        vector<vector<int>> paths;
-        if (graph.size() == 0) {
-            return paths;
-        }
-        vector<int> path;
-        dfs(graph, 0, path, paths);
-        return paths;
+    Node(int _val) {
+        val = _val;
+        next = NULL;
+        random = NULL;
     }
 };
 
+Node* copyRandomList_hash(Node* head) {
+    unordered_map<Node*, Node*> mp;
+
+    Node* curr = head;
+    Node* curr_deep = new Node(head->val);
+    mp.emplace(head, curr_deep);
+    Node* prev_deep = curr_deep;
+   
+    while (curr != nullptr)
+    {
+        if (mp.contains(curr))
+        {
+            curr_deep = mp[curr];
+        }
+        else
+        {
+            curr_deep = new Node(curr->val);
+            mp.emplace(curr, curr_deep);
+        }
+
+        if (mp.contains(curr->random))
+        {
+            curr_deep->random = mp[curr->random];
+        }
+        else
+        {
+            Node* random = curr->random;
+
+            if (random != nullptr)
+            {
+                Node* new_random = new Node(random->val);
+                mp.emplace(random, new_random);
+                curr_deep->random = new_random;
+            }
+        }
+       
+        curr = curr->next;
+        prev_deep->next = curr_deep;
+        prev_deep = curr_deep;
+    }
+
+    return mp[head];
+}
+
+Node* copyRandomList(Node* head) {
+    if (!head) {
+        return nullptr;
+    }
+    
+    Node* ptr = head;
+    while (ptr != nullptr) {
+        Node* newNode = new Node(ptr->val);
+        newNode->next = ptr->next;
+        ptr->next = newNode;
+        ptr = newNode->next;
+    }
+    ptr = head;
+
+    while (ptr != nullptr) {
+        ptr->next->random =
+            (ptr->random != nullptr) ? ptr->random->next : nullptr;
+        ptr = ptr->next->next;
+    }
+
+    Node* ptr_old_list = head;        // A->B->C
+    Node* ptr_new_list = head->next;  // A'->B'->C'
+    Node* head_new = head->next;
+
+    while (ptr_old_list != nullptr) {
+        ptr_old_list->next = ptr_old_list->next->next;
+        ptr_new_list->next = (ptr_new_list->next != nullptr)
+            ? ptr_new_list->next->next
+            : nullptr;
+        ptr_old_list = ptr_old_list->next;
+        ptr_new_list = ptr_new_list->next;
+    }
+    return head_new;
+}
+
+
+ListNode* reverseList(ListNode* head) {
+    ListNode* current = head;
+    ListNode* prev = nullptr;
+    while (current != nullptr)
+    {
+        ListNode* next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
+    }
+    return prev;
+}
+
+ListNode* reverseBetween(ListNode* head, int left, int right) {
+    ListNode* dummy = new ListNode(0, head);
+    ListNode* before = dummy;
+
+    for (int i = 1; i < left; ++i) {
+        before = before->next;
+    }
+
+    ListNode* prev = before;
+    ListNode* curr = before->next;
+
+    for (int i = left; i <= right; ++i) {
+        ListNode* next = curr->next;
+        curr->next = prev;
+        prev = curr;
+        curr = next;
+    }
+
+    before->next->next = curr;
+    before->next = prev;
+
+    return dummy->next;
+}
+
+ListNode* deleteDuplicates(ListNode* head) {
+    if (head == nullptr)
+        return nullptr;
+
+    ListNode* dummy = new ListNode(301);
+    ListNode* prev_node = dummy;
+    ListNode* first = head->next;
+    ListNode* second = head;
+
+    if ((head->next != nullptr && head->next->val != head->val) || head->next == nullptr)
+    {
+        prev_node->next = new ListNode(head->val);
+        prev_node = prev_node->next;
+    }
+
+    while (first != nullptr)
+    {
+        if (!(first->val == second->val)  &&
+            !(first->next != nullptr && first->next->val == first->val))
+        {
+            prev_node->next = new ListNode(first->val);
+            prev_node = prev_node->next;
+        }
+        first = first->next;
+        second = second->next;
+    }
+
+    return dummy->next;
+}
+
+//----------------------------------------------------------------------------
+bool canJumpFromPosition(int position, vector<int>& nums) {
+    if (position == nums.size() - 1) {
+        return true;
+    }
+
+    int furthestJump = min(position + nums[position], (int)nums.size() - 1);
+    for (int nextPosition = position + 1; nextPosition <= furthestJump;
+        nextPosition++) {
+        if (canJumpFromPosition(nextPosition, nums)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+bool canJump(vector<int>& nums) { return canJumpFromPosition(0, nums); }
+
+//--------------------------------------------------------------------------------
+class Solution {
+    // box size
+    int n = 3;
+    // row size
+    int N = n * n;
+    vector<vector<int>> rows;
+    vector<vector<int>> columns;
+    vector<vector<int>> boxes;
+    vector<vector<char>> board;
+    bool sudoku_solved = false;
+
+public:
+    bool could_place(int d, int row, int col) {
+        int idx = (row / n) * n + col / n;
+        return rows[row][d] + columns[col][d] + boxes[idx][d] == 0;
+    }
+
+    void place_number(int d, int row, int col) {
+        int idx = (row / n) * n + col / n;
+        rows[row][d]++;
+        columns[col][d]++;
+        boxes[idx][d]++;
+        board[row][col] = (char)(d + '0');
+    }
+
+    void remove_number(int d, int row, int col) {
+        int idx = (row / n) * n + col / n;
+        rows[row][d]--;
+        columns[col][d]--;
+        boxes[idx][d]--;
+        board[row][col] = '.';
+    }
+
+    void place_next_numbers(int row, int col) {
+        if ((col == N - 1) && (row == N - 1)) {
+            sudoku_solved = true;
+        }
+        else {
+            if (col == N - 1) {
+                backtrack(row + 1, 0);
+            }
+            else {
+                backtrack(row, col + 1);
+            }
+        }
+    }
+
+    void backtrack(int row, int col) {
+        if (board[row][col] == '.') {
+            for (int d = 1; d <= 9; d++) {
+                if (could_place(d, row, col)) {
+                    place_number(d, row, col);
+                    place_next_numbers(row, col);
+                    if (!sudoku_solved) {
+                        remove_number(d, row, col);
+                    }
+                }
+            }
+        }
+        else {
+            place_next_numbers(row, col);
+        }
+    }
+
+    void solveSudoku(vector<vector<char>>& board) {
+        this->board = board;
+        rows = vector<vector<int>>(N, vector<int>(N + 1, 0));
+        columns = vector<vector<int>>(N, vector<int>(N + 1, 0));
+        boxes = vector<vector<int>>(N, vector<int>(N + 1, 0));
+
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                char num = board[i][j];
+                if (num != '.') {
+                    int d = num - '0';
+                    place_number(d, i, j);
+                }
+            }
+        }
+        backtrack(0, 0);
+        board = this->board;
+    }
+};
+//--------------------------------------------------------------------------------
+// 
+struct TreeNode {
+   int val;
+   TreeNode* left;
+   TreeNode* right;
+   TreeNode() : val(0), left(nullptr), right(nullptr) {}
+   TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+   TreeNode(int x, TreeNode* left, TreeNode* right) : val(x), left(left), right(right) {}
+};
+
+
+TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+    if (preorder.empty() || inorder.empty()) return nullptr;
+
+    unordered_map<int, int> inorderIndexMap;
+    for (int i = 0; i < inorder.size(); i++) {
+        inorderIndexMap[inorder[i]] = i;
+    }
+
+    stack<TreeNode*> st;
+    TreeNode* root = new TreeNode(preorder[0]);
+    st.push(root);
+
+    for (int i = 1; i < preorder.size(); ++i) {
+        int preorderValue = preorder[i];
+        TreeNode* node = new TreeNode(preorderValue);
+
+
+        if (inorderIndexMap[preorderValue] < inorderIndexMap[st.top()->val]) {
+            st.top()->left = node;
+        }
+        else {
+            TreeNode* parent = nullptr;
+            while (!st.empty() && inorderIndexMap[preorderValue] > inorderIndexMap[st.top()->val]) {
+                parent = st.top();
+                st.pop();
+            }
+            parent->right = node;
+        }
+
+        st.push(node);
+    }
+
+    return root;
+}
+
+TreeNode* buildTree_post(vector<int>& inorder, vector<int>& postorder) {
+    if (postorder.empty() || inorder.empty()) return nullptr;
+
+    unordered_map<int, int> inorderIndexMap;
+    for (int i = 0; i < inorder.size(); i++) {
+        inorderIndexMap[inorder[i]] = i;
+    }
+
+    stack<TreeNode*> st;
+    int postIndex = postorder.size() - 1;
+    TreeNode* root = new TreeNode(postorder[postIndex--]);
+    st.push(root);
+
+    while (postIndex >= 0) {
+        int postorderValue = postorder[postIndex];
+        TreeNode* node = new TreeNode(postorderValue);
+
+        if (inorderIndexMap[postorderValue] > inorderIndexMap[st.top()->val]) {
+            st.top()->right = node;
+        }
+        else {
+            TreeNode* parent = nullptr;
+            while (!st.empty() && inorderIndexMap[postorderValue] < inorderIndexMap[st.top()->val]) {
+                parent = st.top();
+                st.pop();
+            }
+            parent->left = node;
+        }
+
+        st.push(node);
+        postIndex--;
+    }
+
+    return root;
+}
+
+// Вспомогательная функция для вычисления высоты дерева
+int treeHeight(TreeNode* root) {
+    if (root == nullptr) return 0;
+    return max(treeHeight(root->left), treeHeight(root->right)) + 1;
+}
+
+// Вспомогательная функция для печати уровня дерева
+void printLevel(TreeNode* root, int level, int indentSpace, int levelHeight, int& spaces) {
+    if (root == nullptr) {
+        cout << setw((levelHeight - level + 1) * indentSpace + 1) << " ";
+        return;
+    }
+
+    if (level == 1) {
+        cout << setw(spaces) << " " << root->val;
+        spaces = indentSpace * 2;
+    }
+    else if (level > 1) {
+        printLevel(root->left, level - 1, indentSpace, levelHeight, spaces);
+        printLevel(root->right, level - 1, indentSpace, levelHeight, spaces);
+    }
+}
+
+// Функция для печати дерева в ASCII виде
+void printTree(TreeNode* root) {
+    int height = treeHeight(root);
+    int levelHeight = height;
+    int indentSpace = 3;
+
+    for (int i = 1; i <= height; ++i) {
+        int spaces = indentSpace * (levelHeight - i + 1);
+        printLevel(root, i, indentSpace, levelHeight, spaces);
+        cout << endl;
+    }
+}
+
+
+void flatten_preorder(TreeNode* root)
+{
+    stack<TreeNode*>st;
+    st.push(root);
+    while (!st.empty())
+    {
+        TreeNode* curr = st.top();
+        st.pop();
+        if (curr == NULL) return;
+        if (curr->right != NULL) st.push(curr->right);
+        if (curr->left != NULL) st.push(curr->left);
+        if (!st.empty())
+        {
+            curr->right = st.top();
+        }
+        curr->left = NULL;
+    }
+    return;
+}
+
+void flatten_inorder(TreeNode** root) {
+    if (root == nullptr) {
+        return;
+    }
+
+    stack<TreeNode*> st;
+    TreeNode* curr = *root;
+    TreeNode* prev = nullptr;
+    bool new_root = true;
+
+    while (!st.empty() || curr != nullptr) {
+        while (curr != nullptr) {
+            st.push(curr);
+            curr = curr->left;
+        }
+
+        curr = st.top();
+        st.pop();
+
+        if (new_root)
+        {
+            *root = curr;
+            new_root = false;
+        }
+
+        if (prev != nullptr) {
+            prev->right = curr;
+            prev->left = nullptr;
+        }
+
+        prev = curr;
+        curr = curr->right;
+    }
+}
+
+void flatten(TreeNode* root) {
+    // Initialize a pointer
+    // 'curr' to the root of the tree
+    TreeNode* curr = root;
+
+    // Iterate until 'curr'
+    // becomes NULL
+    while (curr) {
+        // Check if the current
+        // node has a left child
+        if (curr->left) {
+            // If yes, find the rightmost
+            // node in the left subtree
+            TreeNode* pre = curr->left;
+            while (pre->right) {
+                pre = pre->right;
+            }
+
+            // Connect the rightmost node in
+            // the left subtree to the current
+           //  node's right child
+            pre->right = curr->right;
+
+            // Move the entire left subtree to the
+            // right child of the current node
+            curr->right = curr->left;
+
+            // Set the left child of
+            // the current node to NULL
+            curr->left = NULL;
+        }
+
+        // Move to the next node
+        // on the right side
+        curr = curr->right;
+    }
+}
+
+int dfs(TreeNode* root) {
+    int res = 0;
+    stack<pair<TreeNode*, int>> stk;
+    stk.push(make_pair(root, root->val));
+
+    while (!stk.empty()) {
+        auto [node, value] = stk.top();
+        stk.pop();
+
+        if (node->right == nullptr && node->left == nullptr) {
+            res += value;
+        }
+
+        if (node->right != nullptr) {
+            stk.push(make_pair(node->right, node->right->val + value * 10));
+        }
+        if (node->left != nullptr) {
+            stk.push(make_pair(node->left, node->left->val + value*10));
+        }
+    }
+
+    return res;
+}
+
+int maxPathSum(TreeNode* root) {
+    if (root == nullptr) {
+        return 0;
+    }
+
+    int max_sum = INT_MIN;
+    stack<pair<TreeNode*, int> > s;
+    s.push(make_pair(root, 0));
+
+    while (!s.empty()) {
+        auto [node, state] = s.top();
+        s.pop();
+
+        if (node == nullptr) {
+            continue;
+        }
+
+        if (state == 0) {
+            // first visit to the node
+            s.push(make_pair(node, 1));
+            s.push(make_pair(node->left, 0));
+        }
+        else if (state == 1) {
+            // second visit to the node
+            s.push(make_pair(node, 2));
+            s.push(make_pair(node->right, 0));
+        }
+        else {
+            // third visit to the node
+            int left_sum = (node->left != nullptr)
+                ? node->left->val
+                : 0;
+            int right_sum = (node->right != nullptr)
+                ? node->right->val
+                : 0;
+            max_sum
+                = max(max_sum, node->val + max(0, left_sum)
+                    + max(0, right_sum));
+            int max_child_sum = max(left_sum, right_sum);
+            node->val += max(0, max_child_sum);
+        }
+    }
+
+    return max_sum;
+}
+
+int sumNumbers(TreeNode* root) {
+    if (root == nullptr)
+        return 0;
+    return dfs(root);
+}
+
+int computeDepth(TreeNode* node) {
+    int d = 0;
+    while (node->left != nullptr) {
+        node = node->left;
+        ++d;
+    }
+    return d;
+}
+bool exists(int idx, int d, TreeNode* node) {
+    int left = 0, right = pow(2, d) - 1;
+    int pivot;
+    for (int i = 0; i < d; ++i) {
+        pivot = left + (right - left) / 2;
+        if (idx <= pivot) {
+            node = node->left;
+            right = pivot;
+        }
+        else {
+            node = node->right;
+            left = pivot + 1;
+        }
+    }
+    return node != nullptr;
+}
+int countNodes(TreeNode* root) {
+    if (root == nullptr)
+        return 0;
+    int d = computeDepth(root);
+    if (d == 0)
+        return 1;
+    int left = 1, right = pow(2, d) - 1;
+    int pivot;
+    while (left <= right) {
+        pivot = left + (right - left) / 2;
+        if (exists(pivot, d, root))
+            left = pivot + 1;
+        else
+            right = pivot - 1;
+    }
+    return pow(2, d) - 1 + left;
+}
+
+TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+    if (root == NULL || root == p || root == q) {
+        return root;
+    }
+    TreeNode* left = lowestCommonAncestor(root->left, p, q);
+    TreeNode* right = lowestCommonAncestor(root->right, p, q);
+    if (left == NULL) {
+        return right;
+    }
+    else if (right == NULL) {
+        return left;
+    }
+    else
+    {
+        return root;
+    }
+}
+
+int deleteAndEarn(vector<int>& nums) {
+    unordered_map<int, int> points;
+
+    for (int num : nums) {
+        points[num] += num;
+    }
+
+    vector<int> elements;
+    for (auto& p : points) {
+        elements.push_back(p.first);
+    }
+    sort(elements.begin(), elements.end());
+
+    int twoBack = 0;
+    int oneBack = points[elements[0]];
+
+    for (int i = 1; i < elements.size(); i++) {
+        int currentElement = elements[i];
+        int temp = oneBack;
+        if (currentElement == elements[i - 1] + 1) {
+            oneBack = max(oneBack, twoBack + points[currentElement]);
+        }
+        else {
+            oneBack += points[currentElement];
+        }
+        twoBack = temp;
+    }
+
+    return oneBack;
+}
+
 int main() {
-    vector<vector<int>> graph{ {1,2} ,{3},{3},{} };
-    allPathsSourceTarget(graph);
+    
+
     return 0;
 }

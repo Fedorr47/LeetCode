@@ -74,5 +74,14 @@
     <ClInclude Include="Tasks\BestStock.h">
       <Filter>Header Files\Tasks</Filter>
     </ClInclude>
+    <ClInclude Include="SlidingWindow.h">
+      <Filter>Header Files\Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="DFS_BFS.h">
+      <Filter>Header Files\Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="LRFU.h">
+      <Filter>Header Files\Tasks</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
