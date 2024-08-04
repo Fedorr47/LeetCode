@@ -222,89 +222,7 @@ bool canJumpFromPosition(int position, vector<int>& nums) {
 bool canJump(vector<int>& nums) { return canJumpFromPosition(0, nums); }
 
 //--------------------------------------------------------------------------------
-class Solution {
-    // box size
-    int n = 3;
-    // row size
-    int N = n * n;
-    vector<vector<int>> rows;
-    vector<vector<int>> columns;
-    vector<vector<int>> boxes;
-    vector<vector<char>> board;
-    bool sudoku_solved = false;
 
-public:
-    bool could_place(int d, int row, int col) {
-        int idx = (row / n) * n + col / n;
-        return rows[row][d] + columns[col][d] + boxes[idx][d] == 0;
-    }
-
-    void place_number(int d, int row, int col) {
-        int idx = (row / n) * n + col / n;
-        rows[row][d]++;
-        columns[col][d]++;
-        boxes[idx][d]++;
-        board[row][col] = (char)(d + '0');
-    }
-
-    void remove_number(int d, int row, int col) {
-        int idx = (row / n) * n + col / n;
-        rows[row][d]--;
-        columns[col][d]--;
-        boxes[idx][d]--;
-        board[row][col] = '.';
-    }
-
-    void place_next_numbers(int row, int col) {
-        if ((col == N - 1) && (row == N - 1)) {
-            sudoku_solved = true;
-        }
-        else {
-            if (col == N - 1) {
-                backtrack(row + 1, 0);
-            }
-            else {
-                backtrack(row, col + 1);
-            }
-        }
-    }
-
-    void backtrack(int row, int col) {
-        if (board[row][col] == '.') {
-            for (int d = 1; d <= 9; d++) {
-                if (could_place(d, row, col)) {
-                    place_number(d, row, col);
-                    place_next_numbers(row, col);
-                    if (!sudoku_solved) {
-                        remove_number(d, row, col);
-                    }
-                }
-            }
-        }
-        else {
-            place_next_numbers(row, col);
-        }
-    }
-
-    void solveSudoku(vector<vector<char>>& board) {
-        this->board = board;
-        rows = vector<vector<int>>(N, vector<int>(N + 1, 0));
-        columns = vector<vector<int>>(N, vector<int>(N + 1, 0));
-        boxes = vector<vector<int>>(N, vector<int>(N + 1, 0));
-
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
-                char num = board[i][j];
-                if (num != '.') {
-                    int d = num - '0';
-                    place_number(d, i, j);
-                }
-            }
-        }
-        backtrack(0, 0);
-        board = this->board;
-    }
-};
 //--------------------------------------------------------------------------------
 // 
 struct TreeNode {
@@ -685,8 +603,142 @@ int deleteAndEarn(vector<int>& nums) {
     return oneBack;
 }
 
-int main() {
-    
+class Solution {
+private:
+    vector<vector<char>> board;
+    int ROWS;
+    int COLS;
 
+public:
+    bool exist(vector<vector<char>>& board, string word) {
+        this->board = board;
+        ROWS = board.size();
+        COLS = board[0].size();
+        for (int row = 0; row < ROWS; ++row)
+            for (int col = 0; col < COLS; ++col)
+                if (backtrack(row, col, word)) return true;
+        return false;
+    }
+
+protected:
+    bool backtrack(int row, int col, const string& word) {
+        stack<tuple<int, int, int, char>> st; // (row, col, index)
+        st.push({ row, col, 0, board[row][col]});
+        int count = 3;
+        vector<vector<char>> visited(ROWS, vector<char>(COLS, ' '));
+
+        while (!st.empty()) {     
+            auto [r, c, index, val] = st.top();
+            st.pop();
+            
+            if (board[r][c] != word[index] && count > 0)
+            {
+                --count;
+                continue;
+            }
+
+            if (board[r][c] == '#' && count == 0)
+            {
+                board[r][c] = val;
+                continue;
+            }
+
+            if (index == word.size()-1)
+            {
+                return true;
+            }
+
+            int rowOffsets[4] = { 0, 1, 0, -1 };
+            int colOffsets[4] = { 1, 0, -1, 0 };
+            
+            st.push({r,c,index,board[r][c]});
+            board[r][c] = '#';
+
+            for (int d = 0; d < 4; ++d) {
+                int newRow = r + rowOffsets[d];
+                int newCol = c + colOffsets[d];
+                if (newRow >= 0 && newRow < ROWS && newCol >= 0 && newCol < COLS)
+                {
+                    st.push({ newRow, newCol, index + 1, board[newRow][newCol] });
+                }
+            }
+            count = 4;
+
+        }
+        return false;
+    }
+};
+
+class sortListC {
+public:
+    ListNode* sortList(ListNode* head) {
+        if (!head || !head->next) return head;
+        ListNode* mid = getMid(head);
+        ListNode* left = sortList(head);
+        ListNode* right = sortList(mid);
+        return merge(left, right);
+    }
+
+    ListNode* merge(ListNode* list1, ListNode* list2) {
+        ListNode dummyHead(0);
+        ListNode* ptr = &dummyHead;
+        while (list1 && list2) {
+            if (list1->val < list2->val) {
+                ptr->next = list1;
+                list1 = list1->next;
+            }
+            else {
+                ptr->next = list2;
+                list2 = list2->next;
+            }
+            ptr = ptr->next;
+        }
+        if (list1)
+            ptr->next = list1;
+        else
+            ptr->next = list2;
+
+        return dummyHead.next;
+    }
+
+    ListNode* getMid(ListNode* head) {
+        ListNode* midPrev = nullptr;
+        while (head && head->next) {
+            midPrev = (midPrev == nullptr) ? head : midPrev->next;
+            head = head->next->next;
+        }
+        ListNode* mid = midPrev->next;
+        midPrev->next = nullptr;
+        return mid;
+    }
+};
+
+string addBinary(string a, string b) {
+    int n = a.size(), m = b.size();
+    if (n < m)
+        return addBinary(b, a);  // Ensure 'a' is always the longer string
+
+    string result;
+    int carry = 0, j = m - 1;
+
+    for (int i = n - 1; i >= 0; --i) {
+        if (a[i] == '1') ++carry;
+        if (j >= 0 && b[j--] == '1') ++carry;
+
+        result.push_back((carry % 2) ? '1' : '0');
+        carry /= 2;
+    }
+
+    if (carry == 1) result.push_back('1');  // Handle the last carry
+
+    reverse(result.begin(),
+        result.end());  // The result is built in reverse
+    return result;
+}
+
+int main() {
+    addBinary("1011", "1011");
+    
+    
     return 0;
 }

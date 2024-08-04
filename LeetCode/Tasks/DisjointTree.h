@@ -260,15 +260,18 @@ namespace DisjointTree
         return edge1.cost_ > edge2.cost_;
     }
 
-    int minCostConnectPoints(vector<vector<int>>& points)
-    {
-        int sz = points.size();
-        if (sz == 0)
+    int minCostConnectPoints_Krukal(vector<vector<int>>& points)
+    {     
+        if (points.size() == 0)
         {
             return 0;
         }
 
+        int sz = points.size();
         priority_queue<Edge> pq;
+        int res = 0;
+        int count = sz - 1;
+
         UnionFind uf(sz);
 
         for (int i = 0; i < sz; ++i)
@@ -283,8 +286,7 @@ namespace DisjointTree
             }
         }
 
-        int res = 0;
-        int count = sz - 1;
+        
         while (!pq.empty() && count > 0)
         {
             Edge e = pq.top();
@@ -299,6 +301,50 @@ namespace DisjointTree
         }
 
         return res;
+    }
+
+    int minCostConnectPoints_Prims(vector<vector<int>>& points) {
+        if (points.size() == 0) {
+            return 0;
+        }
+
+        int sz = points.size();
+        priority_queue<Edge> pq;
+        int result = 0;
+        int count = sz - 1;
+
+        vector<bool> visited(sz);
+        
+        vector<int>& coordinate1 = points[0];
+        for (int j = 1; j < sz; j++) 
+        {
+            vector<int>& coordinate2 = points[j];
+            int cost = abs(coordinate1[0] - coordinate2[0]) + abs(coordinate1[1] - coordinate2[1]);
+            Edge edge(0, j, cost);
+            pq.push(edge);
+        }
+        visited[0] = true;
+
+        while (!pq.empty() && count > 0) {
+            Edge edge = pq.top();
+            pq.pop();
+            int point1 = edge.start_point_;
+            int point2 = edge.end_point_;
+            int cost = edge.cost_;
+            if (!visited[point2]) {
+                result += cost;
+                visited[point2] = true;
+                for (int j = 0; j < sz; j++) {
+                    if (!visited[j]) {
+                        int distance = abs(points[point2][0] - points[j][0]) +
+                            abs(points[point2][1] - points[j][1]);
+                        pq.push(Edge(point2, j, distance));
+                    }
+                }
+                count--;
+            }
+        }
+        return result;
     }
 
 }
