@@ -347,6 +347,4 @@ namespace DisjointTree
         return result;
     }
 
-}
-
 
