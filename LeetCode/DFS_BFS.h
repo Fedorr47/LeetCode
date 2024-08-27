@@ -283,3 +283,54 @@ public:
     }
 };
 
+
+// Definition for a Node.
+class NodeK {
+public:
+    int val;
+    vector<NodeK*> children;
+
+    NodeK() {}
+
+    NodeK(int _val) {
+        val = _val;
+    }
+
+    NodeK(int _val, vector<NodeK*> _children) {
+        val = _val;
+        children = _children;
+    }
+};
+
+class InOrderN {
+public:
+    vector<int> postorder(NodeK* root) {
+        if (root == nullptr)
+            return vector<int>{};
+
+        vector<int> res;
+        deque<pair<NodeK*, int>> q;
+        q.push_front({ root, 0 });
+
+        while (!q.empty())
+        {
+            auto [top, was] = q.front();
+            q.pop_front();
+
+            if (top->children.size() == 0 || was)
+            {
+                res.push_back(top->val);
+                continue;
+            }
+
+            q.push_front({ top, 1 });
+            for (int i = top->children.size() - 1; i >= 0; --i)
+            {
+                q.push_front({ top->children[i], 0 });
+            }
+        }
+
+        return res;
+    }
+};
+

@@ -954,75 +954,67 @@ public:
 };
 
 
-class SAP {
+
+// Definition for a Node.
+class NodeK {
 public:
-    struct ColorStruct
-    {
-        int node = 0;
-        int color = 0;
-        int level = 0;
-    };
+    int val;
+    vector<NodeK*> children;
 
-    vector<int> shortestAlternatingPaths(int n, vector<vector<int>>& redEdges, vector<vector<int>>& blueEdges) {
-        vector<int> res(n, -1);
+    NodeK() {}
 
-        int blue = 1;
-        int red = 2;
+    NodeK(int _val) {
+        val = _val;
+    }
 
-        vector<vector<int>> adj(n);
-        for (int i = 0; i < n; ++i)
-        {
-            adj[i] = vector<int>(n);
-        }
+    NodeK(int _val, vector<NodeK*> _children) {
+        val = _val;
+        children = _children;
+    }
+};
 
-        int vec_count = 0;
-        for (auto nodes : redEdges)
-        {
-            for (auto node : nodes)
-            {
-                adj[vec_count][node] |= red;
-            }
-            ++vec_count;
-        }
-        for (auto nodes : blueEdges)
-        {
-            for (auto node : nodes)
-            {
-                adj[vec_count][node] |= blue;
-            }
-            ++vec_count;
-        }
+class InOrderN {
+public:
+    vector<int> postorder(NodeK* root) {
+        if (root == nullptr)
+            return vector<int>{};
 
-        queue<ColorStruct> q;
-        q.push(ColorStruct{ 0,3,0 });
+        vector<int> res;
+        deque<pair<NodeK*,int>> q;
+        q.push_front({ root, 0 });
 
         while (!q.empty())
         {
-            auto [node, color, level] = q.front();
-            q.pop();
+            auto [top, was] = q.front();
+            q.pop_front();
 
-            res[node] = level;
-
-            for (int i = 0; i < n; ++i)
+            if (top->children.size() == 0 || was)
             {
-                if ((i != node) && (adj[node][i] & color))
-                {
-                    q.push(ColorStruct{ i,adj[i][node],level+1});
-                }
+                res.push_back(top->val);
+                continue;
             }
 
+            q.push_front({top, 1});
+            for (int i = top->children.size() - 1; i >= 0; --i)
+            {
+                q.push_front({ top->children[i], 0 });
+            }
         }
 
         return res;
     }
 };
 
-
 int main() {
+    NodeK* node5 = new NodeK(5);
+    NodeK* node6 = new NodeK(6);
+    NodeK* node3 = new NodeK(3, { node5, node6 });
+    NodeK* node2 = new NodeK(2);
+    NodeK* node4 = new NodeK(4);
+    NodeK* node1 = new NodeK(1, { node3 , node2 , node4 });
 
-    SAP sap;
-    vector<vector<int>> redEdges{ {0,1}, {1,2} };  vector<vector<int>> blueEdges{};
-    sap.shortestAlternatingPaths(3, redEdges, blueEdges);
+    InOrderN rep;
+    rep.postorder(node1);
 
     // Пример входных данных
     std::string s1 = "abc";

@@ -112,6 +112,50 @@ int networkDelayTime(vector<vector<int>>& times, int n, int k) {
     return answer == INT_MAX ? -1 : answer;
 }
 
+// https://leetcode.com/problems/path-with-maximum-probability/description
+double maxProbability(int n, vector<vector<int>>& edges,
+    vector<double>& succProb, int start_node,
+    int end_node) {
+    vector<vector<pair<int, double>>> adj(n);
+    const int INF = numeric_limits<int>::max();
+
+    for (int i = 0; i < edges.size(); ++i) {
+        int from = edges[i][0];
+        int to = edges[i][1];
+        double log_p = -log(succProb[i]);
+
+        adj[from].push_back({ to, log_p });
+        adj[to].push_back({ from, log_p });
+    }
+
+    priority_queue<pair<double, int>, vector<pair<double, int>>,
+        greater<pair<double, int>>>
+        pq;
+    vector<double> dist(n, INF);
+
+    pq.emplace(0.0, start_node);
+    dist[start_node] = 0.0;
+
+    while (!pq.empty()) {
+        auto [curr_d, node] = pq.top();
+        pq.pop();
+
+        if (node == end_node)
+            return exp(-curr_d);
+
+        for (auto& [neigbour, log_p] : adj[node]) {
+            double new_d = curr_d + log_p;
+
+            if (new_d < dist[neigbour]) {
+                dist[neigbour] = new_d;
+                pq.emplace(new_d, neigbour);
+            }
+        }
+    }
+
+    return 0.0;
+}
+
 // https://leetcode.com/problems/cheapest-flights-within-k-stops/description/
 int findCheapestPrice(int n, vector<vector<int>>& flights, int src, int dst, int k) {
     if (src == dst) {
